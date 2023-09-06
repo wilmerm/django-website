@@ -1,3 +1,13 @@
 from django.shortcuts import render
 
-# Create your views here.
+from .models import (
+    SiteConfig,
+)
+
+
+def index(request):
+    siteconfig = SiteConfig.get_current(request)
+    context = {
+        'post': siteconfig.homepage,
+    }
+    return render(request, 'web/post_detail.html', context)

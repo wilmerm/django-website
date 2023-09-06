@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+{% load web %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ siteconfig.title }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ siteconfig.description }}{% endblock %}">
+  <link href="{{ siteconfig.favicon.url }}" rel="shortcut icon" type="image/x-any" />
+
+  {% block css %}
+    {% if theme.css %}{{ theme.css|safe }}{% endif %}
+  {% endblock %}
+
+</head>
+<body>
+  <header>
+    {% for section in theme.header %}
+    {% section section %}
+    {% endfor %}
+  </header>
+
+  <h1>{% block h1 %}{% endblock %}</h1>
+  {{ theme }}
+
+  <main>
+    {% block main %}
+      {% for section in theme.main %}
+      {% section section %}
+      {% endfor %}
+
+      {% if post and post.allow_comments and siteconfig.allow_comments %}
+      {% comment_box post %}
+      {% endif %}
+    {% endblock main %}
+  </main>
+
+  <footer>
+    {% for section in theme.footer %}
+    {% section section %}
+    {% endfor %}
+  </footer>
+
+  {% block js %}
+    {% if theme.js %}{{ theme.js|safe }}{% endif %}
+  {% endblock %}
+</body>
+</html>

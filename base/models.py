@@ -4,6 +4,9 @@ from django.utils.translation import (
     gettext as _,
     gettext_lazy as _l,
 )
+from django.contrib.sites.models import Site
+
+from .mixins import SiteMixin, TimestampMixin
 
 
 class CustomUserManager(BaseUserManager):
@@ -18,7 +21,6 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
 
 
@@ -36,3 +38,10 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+
+    def has_module_perms(self, *args, **kwargs):
+        return self.is_staff
+
+    def has_perm(self, *args, **kwargs):
+        return self.is_staff
+

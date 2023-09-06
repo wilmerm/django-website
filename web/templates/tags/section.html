@@ -1,0 +1,14 @@
+{% load web %}
+{% if section and section.widgets.all %}
+<section
+  {% for attr,value in section.attrs.items %}
+  {% if value != None %}
+  {{ attr }}="{{ value }}"
+  {% endif %}
+  {% endfor %}
+>
+  {% for widget in section.widgets.all %}
+  {% widget widget %}
+  {% endfor %}
+</section>
+{% endif %}

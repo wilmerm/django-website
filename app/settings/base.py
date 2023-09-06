@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'rest_framework',
     'tinymce',
     'base',
@@ -72,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'web.context_processors.context',
             ],
         },
     },
@@ -174,6 +179,8 @@ MEDIA_URL = env('MEDIA_URL', default='media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+SITE_ID = env.int('SITE_ID', default=1)
+
 
 # User
 
@@ -194,7 +201,7 @@ AUTHENTICATION_CLASSES = [
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = env.bool('SESSION_EXPIRE_AT_BROWSER_CLOSE', default=False)
 
-SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', default=None)
+SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', default=315360000)
 
 
 # Data upload

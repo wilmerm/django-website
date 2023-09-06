@@ -1,0 +1,12 @@
+{% extends 'web/base.html' %}
+
+{% block title %}{{ post.title }} | {{ block.super }}{% endblock %}
+
+{% block meta_description %}{{ post.excerpt }}{% endblock %}
+
+{% block h1 %}{{ post.title }}{% endblock %}
+
+{% block main %}
+{{ post.content|safe }}
+{{ block.super }}
+{% endblock main %}
