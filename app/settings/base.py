@@ -42,7 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'tinymce',
     'base',
+    'web',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -82,7 +86,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': env('DATABASE_ENGINE', default='django.db.backends.sqlite3'),
-        'NAME': env('DATABASE_NAME', default='db'),
+        'NAME': env('DATABASE_NAME', default='db.sqlite3'),
         'USER': env('DATABASE_USER', default=''),
         'PASSWORD': env('DATABASE_PASSWORD', default=''),
         'HOST': env('DATABASE_HOST', default='localhost'),
@@ -173,9 +177,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # User
 
-#AUTH_USER_MODEL = 'base.User'
+AUTH_USER_MODEL = 'base.User'
+
+LOGIN_URL = env.str('LOGIN_URL', default='account_login')
 
 LOGIN_REDIRECT_URL = env.str('LOGIN_REDIRECT_URL', default='/')
+
+AUTHENTICATION_METHOD = 'email'
+
+AUTHENTICATION_CLASSES = [
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 
 # Session
@@ -214,3 +226,20 @@ EMAIL_HOST = env.str('EMAIL_HOST', default=None)
 EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default=None)
 
 EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default=None)
+
+
+# Rest Framework
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': env.list('REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES', default=[
+        'rest_framework.renderers.JSONRenderer',
+    ]),
+}
+
+
+# Tinymce settings.py
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': env.int('TINYMCE_HEIGHT', default=360),
+    'width': env.int('TINYMCE_WIDTH', default=800),
+}

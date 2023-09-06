@@ -1,13 +1,11 @@
 pillow
-
-Django
-
-djangorestframework
-markdown       # Markdown support for the browsable API.
-django-filter  # Filtering support
-
-django-allauth
-
-django-environ
-
 whitenoise
+Django
+djangorestframework
+django-filter  # Filtering support
+markdown       # Markdown support for the browsable API.
+django-allauth
+django-environ
+django-npm
+django-tinymce
+
