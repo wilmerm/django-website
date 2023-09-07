@@ -163,6 +163,3 @@ cython_debug/
 media/
 staticfiles/
 node_modules/
-package.json
-package.lock.json
-yarn.lock
