@@ -1,4 +1,10 @@
+from typing import Dict
+
 from django.db import models
+from django.http import HttpRequest
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.utils.safestring import mark_safe
+from django import template
 from django.utils.functional import cached_property
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
@@ -153,6 +159,13 @@ class Post(SiteMixin, TimestampMixin):
         _l('allow comments'),
         default=True,
     )
+    template = models.ForeignKey(
+        'Template',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_l('template'),
+    )
 
     class Meta:
         verbose_name = _l('post')
@@ -238,6 +251,10 @@ class MenuItem(models.Model):
 
 
 class Widget(SiteMixin):
+    identifier = models.SlugField(
+        unique=True,
+        max_length=50,
+    )
     name = models.CharField(
         _l('name'),
         max_length=100,
@@ -273,10 +290,7 @@ class Section(SiteMixin, HtmlElementMixin):
         _l('name'),
         max_length=50,
     )
-    widgets = models.ManyToManyField(
-        Widget,
-        related_name='section',
-    )
+    content = HTMLField()
     location = models.CharField(
         _l('location'),
         max_length=10,
@@ -310,6 +324,15 @@ class Section(SiteMixin, HtmlElementMixin):
     def footer(cls):
         return cls.objects.filter(location=cls.FOOTER, is_active=True)
 
+    def render(self, request: HttpRequest = None, context: Dict = None):
+        if request:
+            context['request'] = request
+
+        django_template = template.Template(self.content)
+        django_context = template.Context(context)
+        self.rendered_content = django_template.render(context=django_context)
+        return self.rendered_content
+
 
 class Theme(SiteMixin):
     name = models.CharField(
@@ -334,25 +357,38 @@ class Theme(SiteMixin):
         _l('is active'),
         default=True,
     )
+    default_template = models.ForeignKey(
+        'Template',
+        on_delete=models.SET_NULL,
+        related_name='+',
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = _l('theme')
         verbose_name_plural = _l('themes')
 
+    templates: models.QuerySet['Template']
+
     def __str__(self):
         return self.name
 
-    @cached_property
     def header(self):
         return Section.objects.filter(location=Section.HEADER, is_active=True)
 
-    @cached_property
     def main(self):
         return Section.objects.filter(location=Section.MAIN, is_active=True)
 
-    @cached_property
     def footer(self):
         return Section.objects.filter(location=Section.FOOTER, is_active=True)
+
+    def get_default_template(self):
+        return (
+            self.default_template or
+            self.templates.filter(is_active=True).first() or
+            Template.objects.filter(is_active=True).first()
+        )
 
 
 # Modelo para representar una plantilla (Template)
@@ -380,6 +416,10 @@ class Template(models.Model):
         related_name='templates',
         verbose_name=_l('theme')
     )
+    is_active = models.BooleanField(
+        _l('is active'),
+        default=True,
+    )
 
     class Meta:
         verbose_name = 'Plantilla'
@@ -387,6 +427,29 @@ class Template(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        try:
+            self.render()
+        except (ValueError, template.TemplateSyntaxError, AssertionError) as e:
+            raise ValidationError(e)
+
+    @cached_property
+    def content(self):
+        if self.template_content:
+            return mark_safe(self.template_content)
+        elif self.template_file:
+            return mark_safe(self.template_file.read())
+        raise ValueError(f'template {self} has no content.')
+
+    def render(self, request: HttpRequest = None, context: Dict = None):
+        if request:
+            context['request'] = request
+
+        django_template = template.Template(self.content)
+        django_context = template.Context(context)
+        return django_template.render(context=django_context)
+
 
 
 class SiteConfig(SiteMixin):

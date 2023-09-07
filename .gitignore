@@ -160,8 +160,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-media/*
-node_modules/*
+media/
+staticfiles/
+node_modules/
 package.json
 package.lock.json
 yarn.lock

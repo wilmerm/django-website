@@ -249,4 +249,7 @@ REST_FRAMEWORK = {
 TINYMCE_DEFAULT_CONFIG = {
     'height': env.int('TINYMCE_HEIGHT', default=360),
     'width': env.int('TINYMCE_WIDTH', default=800),
+    'plugins': env.str('TINYMCE_PLUGINS', default='advlist autolink lists link image charmap print preview hr anchor pagebreak code'),
+    'toolbar': env.str('TINYMCE_TOOLBAR', default='undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | code'),
+    'extended_valid_elements': env.str('', default='iframe[src|width|height|name|align|frameborder|scrolling]'),
 }

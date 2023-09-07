@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+{% load static %}
 {% load web %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -20,10 +21,11 @@
     {% endfor %}
   </header>
 
-  <h1>{% block h1 %}{% endblock %}</h1>
-  {{ theme }}
-
   <main>
+    {% if post.display_title != False %}
+    <h1>{% block h1 %}{% endblock %}</h1>
+    {% endif %}
+
     {% block main %}
       {% for section in theme.main %}
       {% section section %}
@@ -43,6 +45,7 @@
 
   {% block js %}
     {% if theme.js %}{{ theme.js|safe }}{% endif %}
+    {% static 'tinymce/tinymce.min.js' %}
   {% endblock %}
 </body>
 </html>

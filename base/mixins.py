@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
+from django.db.models.query import QuerySet
 from django.utils.translation import gettext as _, gettext_lazy as _l
 
 
@@ -12,12 +13,21 @@ class TimestampMixin(models.Model):
         abstract = True
 
 
+class OnSiteManager(models.Manager):
+    def get_queryset(self) -> QuerySet:
+        site = get_current_site(None)
+        return super().get_queryset().filter(site=site)
+
+
 class SiteMixin(models.Model):
     site = models.ForeignKey(
         Site,
         on_delete=models.CASCADE,
         editable=False,
     )
+
+    objects = OnSiteManager()
+    all_objects = models.Manager()
 
     class Meta:
         abstract = True

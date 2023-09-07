@@ -88,7 +88,6 @@ class CommentAdmin(admin.ModelAdmin):
 class WidgetAdmin(admin.ModelAdmin):
     list_display = [
         'name',
-        'section',
         'is_active',
     ]
     readonly_fields = [
