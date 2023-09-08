@@ -173,6 +173,8 @@ STATICFILES_FINDERS = [
 
 MEDIA_URL = env('MEDIA_URL', default='media/')
 
+MEDIA_ROOT = env('MEDIA_ROOT', default=(BASE_DIR / 'media'))
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

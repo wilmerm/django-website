@@ -439,7 +439,7 @@ class Template(models.Model):
         if self.template_content:
             return mark_safe(self.template_content)
         elif self.template_file:
-            return mark_safe(self.template_file.read())
+            return mark_safe(self.template_file.read().decode('utf-8'))
         raise ValueError(f'template {self} has no content.')
 
     def render(self, request: HttpRequest = None, context: Dict = None):

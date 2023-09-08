@@ -45,7 +45,7 @@
 
   {% block js %}
     {% if theme.js %}{{ theme.js|safe }}{% endif %}
-    {% static 'tinymce/tinymce.min.js' %}
+    <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
   {% endblock %}
 </body>
 </html>
